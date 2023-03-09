@@ -48,9 +48,9 @@ func (h *HandlerManagerImpl) RegisterHandler(id int32, method interface{}) {
 func (h *HandlerManagerImpl) HandleMsg(id int32, data []byte) {
 	if methodType, ok := h.methodTypes[id]; ok {
 		typ := methodType.msgType
-		//if methodType.msgType.Kind() == reflect.Ptr {
-		//	typ = typ.Elem()
-		//}
+		if methodType.msgType.Kind() == reflect.Ptr {
+			typ = typ.Elem()
+		}
 		msg := reflect.New(typ)
 		h.server.UnMarshal(data, msg.Interface())
 		methodType.method.Call([]reflect.Value{msg})

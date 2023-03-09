@@ -7,5 +7,5 @@ import (
 )
 
 func handle_LoginRequest(req *message.LoginRequest) {
-	fmt.Printf("Hello User %v, Password %v", req.GetAccount(), req.GetPassword())
+	fmt.Printf("Hello User %v, Password %v\n", req.GetAccount(), req.GetPassword())
 }
