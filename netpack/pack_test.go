@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/wzrtzt/GameServer/message"
+	"github.com/wztzt/gameserver/message"
 )
 
 type JsonTest struct {

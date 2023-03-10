@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/wzrtzt/GameServer/netpack"
+	"github.com/wztzt/gameserver/netpack"
 
-	"github.com/wzrtzt/GameServer/message"
+	"github.com/wztzt/gameserver/message"
 )
 
 type handle_method func(any interface{})

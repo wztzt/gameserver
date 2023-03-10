@@ -1,6 +1,6 @@
 package main
 
-import "github.com/wzrtzt/GameServer/network"
+import "github.com/wztzt/gameserver/network"
 
 func main() {
 	server := network.NewServer(":9685")

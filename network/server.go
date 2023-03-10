@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/wzrtzt/GameServer/handler"
+	"github.com/wztzt/gameserver/handler"
 )
 
 type Server interface {

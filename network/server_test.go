@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wzrtzt/GameServer/message"
-	"github.com/wzrtzt/GameServer/netpack"
+	"github.com/wztzt/gameserver/message"
+	"github.com/wztzt/gameserver/netpack"
 )
 
 func TestServer(t *testing.T) {

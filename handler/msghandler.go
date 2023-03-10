@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 
-	"github.com/wzrtzt/GameServer/message"
+	"github.com/wztzt/gameserver/message"
 )
 
 func handle_LoginRequest(req *message.LoginRequest) {

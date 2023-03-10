@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/wzrtzt/GameServer/netpack"
+	"github.com/wztzt/gameserver/netpack"
 )
 
 type HandleMethod func(msg interface{})

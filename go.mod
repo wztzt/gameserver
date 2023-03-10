@@ -1,4 +1,4 @@
-module github.com/wzrtzt/GameServer
+module github.com/wztzt/gameserver
 
 go 1.19
 
