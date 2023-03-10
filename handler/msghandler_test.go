@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/wzrtzt/GameServer/network"
-
 	"github.com/wzrtzt/GameServer/netpack"
 
 	"github.com/wzrtzt/GameServer/message"
@@ -45,10 +43,7 @@ func TestMethod(t *testing.T) {
 }
 
 func TestMsgHandlerManager(t *testing.T) {
-	mgr := &HandlerManagerImpl{
-		server:      network.NewServer(""),
-		methodTypes: make(map[int32]*methodtype),
-	}
+	mgr := DefaultProtoHandlerManager()
 	mgr.RegisterHandler(1, handle_LoginRequest)
 	req := &message.LoginRequest{
 		Account:  "wzert",

@@ -1,9 +1,12 @@
 package network
 
 import (
-	"net"
+	"encoding/binary"
 	"testing"
 	"time"
+
+	"github.com/wzrtzt/GameServer/message"
+	"github.com/wzrtzt/GameServer/netpack"
 )
 
 func TestServer(t *testing.T) {
@@ -12,26 +15,33 @@ func TestServer(t *testing.T) {
 
 	time.Sleep(time.Second * 3)
 
-	/*
-		client := NewClient("127.0.0.1:8989")
-		client.Start()
-		buf := time.Now().Unix()
-		data := make([]byte, 8+4)
-		binary.BigEndian.PutUint32(data, 8)
-		binary.BigEndian.PutUint64(data[4:], uint64(buf))
-		client.SendMsg(data)
-		time.Sleep(time.Second * 2)
-		client.Stop()
-	*/
-
-	var conns []net.Conn
-	for i := 0; i < 100000; i++ {
-		conn, err := net.Dial("tcp", "127.0.0.1:8989")
-		if err != nil {
-			continue
-		}
-		conns = append(conns, conn)
+	client := NewClient("127.0.0.1:8989")
+	client.Start()
+	parser := netpack.ProtoParser{}
+	req := &message.LoginRequest{
+		Account:  "qeww文章",
+		Password: "987654",
 	}
+	data_req, _ := parser.Marshal(req)
+	data := make([]byte, 8+len(data_req))
+	binary.BigEndian.PutUint32(data, uint32(len(data_req)))
+	binary.BigEndian.PutUint32(data[4:], uint32(1))
+	copy(data[8:], data_req)
+	for i := 0; i < 1000; i++ {
+		client.SendMsg(data)
+	}
+
+	time.Sleep(time.Second * 10)
+	client.Stop()
+	/*
+		var conns []net.Conn
+		for i := 0; i < 100000; i++ {
+			conn, err := net.Dial("tcp", "127.0.0.1:8989")
+			if err != nil {
+				continue
+			}
+			conns = append(conns, conn)
+		}*/
 	time.Sleep(time.Second * 5)
 	/*
 		for _, conn := range conns {
@@ -51,9 +61,9 @@ func TestServer(t *testing.T) {
 			conn.Close()
 		}
 	*/
-	for _, conn := range conns {
+	/*for _, conn := range conns {
 		conn.Close()
-	}
+	}*/
 	select {}
 
 }

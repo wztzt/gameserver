@@ -24,7 +24,7 @@ func TestPack(t *testing.T) {
 		fmt.Println(string(sMsg.GetData()))
 	}
 	var parser MsgParser
-	parser = &jsonPaser{}
+	parser = &JsonPaser{}
 	json_data, _ := parser.Marshal(JsonTest{Id: 123, Name: "你好你好"})
 	t.Log(string(json_data))
 	var test JsonTest

@@ -70,11 +70,17 @@ func (c *connectionImpl) startReader() {
 			return
 		}
 		msgLen := binary.BigEndian.Uint32(msgLenBuf)
+		msgIdBuf := make([]byte, 4)
+		if _, err := io.ReadFull(c.conn, msgIdBuf); err != nil {
+			return
+		}
+		msgId := binary.BigEndian.Uint32(msgIdBuf)
 		msgData := make([]byte, msgLen)
 		if _, err := io.ReadFull(c.conn, msgData); err != nil {
 			return
 		}
-		log.Println(string(msgData), c.id)
+		c.server.HandleMsg(int32(msgId), msgData)
+		//log.Println(string(msgData), c.id)
 		c.SendMsg(msgData)
 	}
 }

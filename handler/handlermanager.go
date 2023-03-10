@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/wzrtzt/GameServer/network"
+	"github.com/wzrtzt/GameServer/netpack"
 )
 
 type HandleMethod func(msg interface{})
 
 type HandlerManager interface {
-	RegisterHandler(id int32, method HandleMethod)
+	RegisterHandler(id int32, method interface{})
 	HandleMsg(id int32, data []byte)
 }
 
@@ -20,8 +20,26 @@ type methodtype struct {
 }
 
 type HandlerManagerImpl struct {
-	server      network.Server
+	parser      netpack.MsgParser
 	methodTypes map[int32]*methodtype
+}
+
+func DefaultProtoHandlerManager() HandlerManager {
+	mgr := &HandlerManagerImpl{
+		parser:      &netpack.ProtoParser{},
+		methodTypes: make(map[int32]*methodtype),
+	}
+	mgr.RegisterHandler(1, handle_LoginRequest)
+	return mgr
+}
+
+func DefaultJsonHandlerManager() HandlerManager {
+	mgr := &HandlerManagerImpl{
+		parser:      &netpack.JsonPaser{},
+		methodTypes: make(map[int32]*methodtype),
+	}
+
+	return mgr
 }
 
 func (h *HandlerManagerImpl) RegisterHandler(id int32, method interface{}) {
@@ -52,7 +70,7 @@ func (h *HandlerManagerImpl) HandleMsg(id int32, data []byte) {
 			typ = typ.Elem()
 		}
 		msg := reflect.New(typ)
-		h.server.UnMarshal(data, msg.Interface())
+		h.parser.UnMarshal(data, msg.Interface())
 		methodType.method.Call([]reflect.Value{msg})
 		return
 	}

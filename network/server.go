@@ -5,25 +5,25 @@ import (
 	"log"
 	"net"
 
-	"github.com/wzrtzt/GameServer/netpack"
+	"github.com/wzrtzt/GameServer/handler"
 )
 
 type Server interface {
-	netpack.MsgParser
 	Start()
 	Stop()
 	OnConnectionOpen(conn connection)
+	HandleMsg(id int32, data []byte)
 }
 
 type ServerImpl struct {
-	address string
-	parser  netpack.MsgParser
+	address    string
+	handlerMgr handler.HandlerManager
 }
 
 func NewServer(address string) Server {
 	return &ServerImpl{
-		address: address,
-		parser:  &netpack.ProtoParser{},
+		address:    address,
+		handlerMgr: handler.DefaultProtoHandlerManager(),
 	}
 }
 
@@ -52,16 +52,12 @@ func (s *ServerImpl) NewConnction(conn net.Conn, id uint32) connection {
 	return NewConnction(s, conn, id)
 }
 
+func (s *ServerImpl) HandleMsg(id int32, data []byte) {
+	s.handlerMgr.HandleMsg(id, data)
+}
+
 func (s *ServerImpl) OnConnectionOpen(conn connection) {
 	fmt.Println("New Connection Open")
-}
-
-func (s *ServerImpl) Marshal(msg interface{}) ([]byte, error) {
-	return s.parser.Marshal(msg)
-}
-
-func (s *ServerImpl) UnMarshal(data []byte, msg interface{}) error {
-	return s.parser.UnMarshal(data, msg)
 }
 
 func (s *ServerImpl) Stop() {

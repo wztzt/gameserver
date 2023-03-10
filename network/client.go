@@ -3,6 +3,8 @@ package network
 import (
 	"fmt"
 	"net"
+	"runtime/debug"
+	"sync"
 )
 
 type client interface {
@@ -14,13 +16,16 @@ type client interface {
 type clientImpl struct {
 	address  string
 	conn     net.Conn
+	isClosed bool
 	msgChan  chan []byte
 	exitChan chan bool
+	mutext   sync.Mutex
 }
 
 func NewClient(address string) client {
 	return &clientImpl{
 		address:  address,
+		isClosed: true,
 		msgChan:  make(chan []byte),
 		exitChan: make(chan bool, 1),
 	}
@@ -32,6 +37,7 @@ func (c *clientImpl) Start() {
 	if err != nil {
 		return
 	}
+	c.isClosed = false
 	go c.startReader()
 	go c.stratWriter()
 }
@@ -39,12 +45,16 @@ func (c *clientImpl) Start() {
 func (c *clientImpl) startReader() {
 	defer c.Stop()
 	for {
+		select {
+		case <-c.exitChan:
+			return
+		}
 		data := make([]byte, 1024)
-		len, err := c.conn.Read(data)
+		_, err := c.conn.Read(data)
 		if err != nil {
 			return
 		}
-		print(string(data[:len]))
+		//print(string(data[:len]))
 	}
 }
 
@@ -65,8 +75,13 @@ func (c *clientImpl) SendMsg(data []byte) {
 }
 
 func (c *clientImpl) Stop() {
+	if c.isClosed {
+		return
+	}
 	c.exitChan <- true
 	c.conn.Close()
 	close(c.msgChan)
 	close(c.exitChan)
+	c.isClosed = true
+	fmt.Println(debug.Stack())
 }
