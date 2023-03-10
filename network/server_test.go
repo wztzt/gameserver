@@ -2,6 +2,7 @@ package network
 
 import (
 	"encoding/binary"
+	"strconv"
 	"testing"
 	"time"
 
@@ -28,7 +29,8 @@ func TestServer(t *testing.T) {
 	binary.BigEndian.PutUint32(data[4:], uint32(1))
 	copy(data[8:], data_req)
 	for i := 0; i < 1000; i++ {
-		client.SendMsg(data)
+		req.Password = strconv.Itoa(i)
+		client.SendProtoMsg(1, req)
 	}
 
 	time.Sleep(time.Second * 10)
